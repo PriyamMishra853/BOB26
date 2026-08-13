@@ -1,0 +1,200 @@
+import { groq } from '../config/groq.js';
+import { retrieveClinicalProtocols } from './ragEngine.js';
+import { calculateRiskLevel } from './riskEngine.js';
+
+/**
+ * Full AI Patient Assessment Pipeline:
+ * Patient context + verified OCR documents + wound-photo vision observations
+ *   -> Protocol retrieval (RAG) -> Groq LLM synthesis -> Rule-engine risk override
+ *
+ * Every case is triaged HIGH / MEDIUM / LOW. The deterministic rule engine
+ * always overrides the LLM's risk output, and vision severity can only raise
+ * (never lower) the final level.
+ */
+
+const SYSTEM_PROMPT = `You are an AI clinical-assistance system for rural village health centres in India, supporting trained clinic assistants who work under remote doctor supervision.
+
+NON-NEGOTIABLE SAFETY & LEGAL RULES:
+1. You do not replace a qualified doctor and must never state a definitive diagnosis.
+2. Never fabricate patient information, findings, sources, or protocols. If information is missing, list it under missing_information.
+3. First-aid steps must be simple, numbered, specific actions a trained assistant can perform (positioning, cleaning, dressing, cold sponging, ORS, monitoring intervals).
+4. Medication guidance is restricted to over-the-counter supportive care permitted by the retrieved protocols (e.g. ORS, paracetamol with adult dosing limits, saline drops, antiseptic dressing). Every medicine line MUST end with "— subject to doctor approval".
+5. NEVER suggest antibiotics, steroids, opioids, or any prescription-only (Schedule H/H1/X) drug. Starting those without a registered doctor's prescription is illegal in India.
+6. Base protocol guidance only on the retrieved approved protocols provided to you.
+7. Clearly separate: patient observations, AI assistance, and decisions reserved for the doctor.`;
+
+const RISK_RANK = { LOW: 0, MEDIUM: 1, HIGH: 2 };
+
+export const runFullPatientAssessment = async (patientContext) => {
+  const {
+    patient = {},
+    visit = {},
+    vitals = {},
+    verifiedDocuments = [],
+    imageObservations = []
+  } = patientContext;
+
+  // ---- Merge OCR document data ----
+  const ocrMedications = verifiedDocuments.flatMap((d) => d.medications || []);
+  const ocrHistoryConditions = verifiedDocuments.flatMap((d) => d.medical_history_conditions || []);
+  const ocrAllergies = verifiedDocuments.flatMap((d) => d.allergies_noted || []);
+  const ocrDiagnosisNotes = verifiedDocuments.map((d) => d.diagnosis_notes).filter(Boolean);
+
+  const combinedSymptoms = [visit.chief_complaint, visit.symptoms].filter(Boolean).join('. ');
+  const combinedHistory = [visit.medical_history, ...ocrHistoryConditions, ...ocrDiagnosisNotes].filter(Boolean).join(', ');
+  const combinedAllergies = [visit.allergies, ...ocrAllergies].filter(Boolean).join(', ');
+
+  // ---- 1. Deterministic risk triage (HIGH / MEDIUM / LOW) ----
+  const riskResult = calculateRiskLevel(vitals, combinedSymptoms, combinedHistory);
+  let finalRiskLevel = riskResult.riskLevel;
+  const riskWarnings = [...riskResult.warnings];
+
+  // Vision severity can raise (never lower) the triage level
+  for (const obs of imageObservations) {
+    const sev = obs.severity_impression;
+    if (sev && RISK_RANK[sev] > RISK_RANK[finalRiskLevel]) {
+      finalRiskLevel = sev;
+      riskWarnings.push(`Wound photograph observation raised triage to ${sev}: ${obs.cautious_summary || 'visible concerning features'}`);
+    }
+  }
+
+  // ---- 2. Retrieve approved clinical protocols ----
+  const retrievedProtocols = await retrieveClinicalProtocols(
+    `${combinedSymptoms} ${ocrDiagnosisNotes.join(' ')} ${imageObservations.map((o) => o.cautious_summary || '').join(' ')}`,
+    3
+  );
+
+  // ---- 3. Build the LLM prompt ----
+  const userPrompt = `
+PATIENT DEMOGRAPHICS:
+- Name: ${patient.name || 'Not recorded'} | Age: ${patient.age ?? 'Not recorded'} | Gender: ${patient.gender || 'Not recorded'}
+- Village: ${patient.village || 'Not recorded'} | Preferred language: ${patient.preferred_language || 'Hindi'}
+
+PRESENTING SYMPTOMS (reported by clinic assistant):
+- Chief complaint: ${combinedSymptoms || 'Not recorded'}
+- Symptom duration: ${visit.symptom_duration || 'Not recorded'}
+- Known medical history: ${combinedHistory || 'None reported'}
+- Known allergies: ${combinedAllergies || 'None reported'}
+- Current medications: ${visit.current_medications || 'None reported'}
+
+RECORDED VITALS:
+- Temperature: ${vitals.temperature ? `${vitals.temperature} °F` : 'Not recorded'}
+- Blood pressure: ${vitals.blood_pressure_systolic ? `${vitals.blood_pressure_systolic}/${vitals.blood_pressure_diastolic || '?'} mmHg` : 'Not recorded'}
+- Pulse: ${vitals.pulse ? `${vitals.pulse} bpm` : 'Not recorded'}
+- SpO2: ${vitals.spo2 ? `${vitals.spo2}%` : 'Not recorded'}
+- Respiratory rate: ${vitals.respiratory_rate ? `${vitals.respiratory_rate}/min` : 'Not recorded'}
+
+VERIFIED OCR DOCUMENT DATA (${verifiedDocuments.length} document(s), human-verified):
+- Medications on record: ${JSON.stringify(ocrMedications)}
+- Diagnosis notes from documents: ${JSON.stringify(ocrDiagnosisNotes)}
+
+WOUND / INJURY PHOTO OBSERVATIONS (${imageObservations.length} photo(s), computer vision, non-diagnostic):
+${imageObservations.length === 0 ? '- None uploaded' : imageObservations.map((o, i) => `- Photo ${i + 1} [severity impression: ${o.severity_impression || 'N/A'}]: ${o.cautious_summary || 'No summary'} | Features: ${(o.observable_features || []).join('; ')}`).join('\n')}
+
+RETRIEVED APPROVED CLINICAL PROTOCOLS (MoHFW):
+${retrievedProtocols.map((p) => `- ${p.title} (v${p.version}, ${p.source}):\n  ${p.content}\n  Steps: ${(p.steps || []).join(' -> ')}`).join('\n') || '- None retrieved'}
+
+RULE-ENGINE TRIAGE (already final — do not change it):
+- Risk level: ${finalRiskLevel}
+- Reasoning: ${riskResult.riskReasoning}
+- Warnings: ${JSON.stringify(riskWarnings)}
+
+TASK: Produce the doctor-ready clinical handoff. Return strictly a valid JSON object:
+{
+  "patient_summary": "Structured narrative combining symptoms, vitals, OCR history and photo observations",
+  "key_symptoms": ["..."],
+  "duration": "symptom duration",
+  "important_history": ["history item incl. OCR findings"],
+  "missing_information": ["information not recorded"],
+  "observations": ["non-diagnostic clinical observation"],
+  "risk_level": "${finalRiskLevel}",
+  "first_aid_steps": ["Step 1: <specific action>", "Step 2: ..."],
+  "supportive_medication_guidance": ["<OTC medicine, exact dose & limit> — subject to doctor approval"],
+  "protocol_matches": [{ "title": "...", "source": "...", "version": "...", "guidance": "..." }],
+  "warnings": ["warning sign the assistant must watch for"],
+  "recommended_next_action": "${finalRiskLevel === 'HIGH' ? (riskResult.immediateReferral ? 'EMERGENCY_HOSPITAL_REFERRAL' : 'URGENT_DOCTOR_REVIEW') : finalRiskLevel === 'MEDIUM' ? 'DOCTOR_REVIEW' : 'PROTOCOL_CARE_DOCTOR_OPTIONAL'}",
+  "requires_doctor": ${riskResult.requiresDoctor || finalRiskLevel !== 'LOW'}
+}`;
+
+  // ---- 4. Deterministic fallback assessment (used when the LLM is down) ----
+  const protocolFirstAid = retrievedProtocols[0]?.steps?.length
+    ? retrievedProtocols[0].steps.map((s, i) => `Step ${i + 1}: ${s}`)
+    : [
+        'Step 1: Seat the patient comfortably in a ventilated area and reassure them.',
+        'Step 2: Re-check and record temperature, pulse, blood pressure and SpO2.',
+        'Step 3: Provide Oral Rehydration Solution (ORS) — 1 sachet in 1 litre of clean water, small frequent sips.',
+        'Step 4: Re-check vital signs every 2 hours and record any change.',
+        'Step 5: Escalate to the doctor immediately if breathing difficulty, chest pain, or drowsiness develops.'
+      ];
+
+  let finalAssessment = {
+    patient_summary: `${patient.name || 'Patient'} presents with ${combinedSymptoms || 'reported symptoms'} (duration: ${visit.symptom_duration || 'not recorded'}). Vitals — Temp: ${vitals.temperature || 'N/R'}°F, BP: ${vitals.blood_pressure_systolic || 'N/R'}/${vitals.blood_pressure_diastolic || 'N/R'} mmHg, SpO2: ${vitals.spo2 || 'N/R'}%, Pulse: ${vitals.pulse || 'N/R'} bpm. ${ocrMedications.length > 0 ? `Verified documents list ${ocrMedications.length} prior medication(s).` : 'No prior prescription documents on record.'} ${imageObservations.length > 0 ? `${imageObservations.length} wound photograph(s) attached with computer-vision observations.` : ''}`,
+    key_symptoms: combinedSymptoms ? combinedSymptoms.split(/[,.]/).map((s) => s.trim()).filter(Boolean).slice(0, 6) : [],
+    duration: visit.symptom_duration || 'Not recorded',
+    important_history: combinedHistory ? [combinedHistory] : ['No chronic conditions reported'],
+    missing_information: [
+      ...(vitals.spo2 ? [] : ['SpO2 not recorded']),
+      ...(vitals.temperature ? [] : ['Temperature not recorded']),
+      ...(vitals.blood_pressure_systolic ? [] : ['Blood pressure not recorded'])
+    ],
+    observations: [
+      'Assessment generated from recorded vitals, verified documents and photo observations.',
+      ...imageObservations.map((o) => o.cautious_summary).filter(Boolean)
+    ],
+    risk_level: finalRiskLevel,
+    first_aid_steps: protocolFirstAid,
+    supportive_medication_guidance: [
+      'Oral Rehydration Solution (ORS): 1 sachet dissolved in 1 litre clean drinking water, small frequent sips — subject to doctor approval',
+      'Paracetamol 500 mg orally for temperature above 100°F in adults, maximum 3 doses in 24 hours — subject to doctor approval'
+    ],
+    protocol_matches: retrievedProtocols.map((p) => ({
+      title: p.title,
+      source: p.source,
+      version: p.version,
+      guidance: p.content
+    })),
+    warnings: Array.from(new Set(riskWarnings)),
+    recommended_next_action: finalRiskLevel === 'HIGH' ? (riskResult.immediateReferral ? 'EMERGENCY_HOSPITAL_REFERRAL' : 'URGENT_DOCTOR_REVIEW') : finalRiskLevel === 'MEDIUM' ? 'DOCTOR_REVIEW' : 'PROTOCOL_CARE_DOCTOR_OPTIONAL',
+    requires_doctor: riskResult.requiresDoctor || finalRiskLevel !== 'LOW',
+    generated_by: 'rule-engine-fallback'
+  };
+
+  // ---- 5. Groq LLM synthesis ----
+  if (groq) {
+    try {
+      const chatCompletion = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        temperature: 0.1,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userPrompt }
+        ]
+      });
+
+      const parsed = JSON.parse(chatCompletion.choices[0].message.content);
+      if (parsed && parsed.patient_summary) {
+        finalAssessment = {
+          ...finalAssessment,
+          ...parsed,
+          risk_level: finalRiskLevel, // rule engine always wins
+          warnings: Array.from(new Set([...(parsed.warnings || []), ...riskWarnings])),
+          requires_doctor: riskResult.requiresDoctor || finalRiskLevel !== 'LOW',
+          generated_by: 'groq-llama-3.3-70b'
+        };
+      }
+    } catch (llmErr) {
+      console.warn('Groq LLM assessment failed, using rule-engine assessment:', llmErr.message);
+    }
+  }
+
+  // ---- 6. Attach immutable safety metadata ----
+  finalAssessment.immediate_referral = riskResult.immediateReferral || false;
+  finalAssessment.risk_reasoning = riskResult.riskReasoning;
+  finalAssessment.image_observations = imageObservations;
+  finalAssessment.verified_document_count = verifiedDocuments.length;
+  finalAssessment.legal_disclaimer =
+    'AI-generated clinical assistance for a trained clinic assistant working under remote doctor supervision. This is not a diagnosis or a prescription. All medication guidance requires approval by a Registered Medical Practitioner before administration.';
+
+  return finalAssessment;
+};
