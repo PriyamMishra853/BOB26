@@ -148,10 +148,10 @@
    "record_count": 120,
    "symptom_probs": {
     "red sore around nose": 0.94262,
-    "yellow crust ooze": 0.94262,
     "skin rash": 0.94262,
-    "high fever": 0.84426,
-    "blister": 0.94262
+    "yellow crust ooze": 0.94262,
+    "blister": 0.94262,
+    "high fever": 0.84426
    },
    "precautions": [
     "soak affected area in warm water",
@@ -164,12 +164,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "swollen blood vessels": 0.89344,
-    "bruising": 0.94262,
-    "swollen legs": 0.94262,
-    "cramps": 0.94262,
     "fatigue": 0.94262,
+    "bruising": 0.94262,
+    "swollen blood vessels": 0.89344,
     "prominent veins on calf": 0.94262,
+    "cramps": 0.94262,
+    "swollen legs": 0.94262,
     "obesity": 0.94262
    },
    "precautions": [
@@ -183,13 +183,13 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "swelling of stomach": 0.94262,
     "fluid overload": 0.94262,
     "yellowish skin": 0.94262,
     "vomiting": 0.94262,
-    "history of alcohol consumption": 0.94262,
     "distention of abdomen": 0.94262,
     "abdominal pain": 0.94262,
-    "swelling of stomach": 0.94262
+    "history of alcohol consumption": 0.94262
    },
    "precautions": [
     "stop alcohol consumption",
@@ -203,10 +203,10 @@
    "record_count": 120,
    "symptom_probs": {
     "swelling joints": 0.94262,
-    "painful walking": 0.94262,
-    "stiff neck": 0.94262,
     "muscle weakness": 0.94262,
-    "movement stiffness": 0.94262
+    "movement stiffness": 0.94262,
+    "painful walking": 0.94262,
+    "stiff neck": 0.94262
    },
    "precautions": [
     "exercise",
@@ -219,9 +219,9 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "chills": 0.89344,
     "continuous sneezing": 0.89344,
     "watering from eyes": 0.89344,
-    "chills": 0.89344,
     "shivering": 0.89344
    },
    "precautions": [
@@ -234,14 +234,14 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "excessive hunger": 0.94262,
-    "depression": 0.94262,
-    "headache": 0.94262,
-    "stiff neck": 0.94262,
-    "irritability": 0.94262,
     "acidity": 0.94262,
     "indigestion": 0.94262,
     "blurred and distorted vision": 0.94262,
+    "excessive hunger": 0.94262,
+    "irritability": 0.94262,
+    "stiff neck": 0.94262,
+    "headache": 0.94262,
+    "depression": 0.94262,
     "visual disturbances": 0.94262
    },
    "precautions": [
@@ -255,10 +255,10 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "skin rash": 0.94262,
     "scurring": 0.89344,
-    "blackheads": 0.89344,
     "pus filled pimples": 0.89344,
-    "skin rash": 0.94262
+    "blackheads": 0.89344
    },
    "precautions": [
     "bath twice",
@@ -271,14 +271,14 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
-    "yellowish skin": 0.94262,
-    "vomiting": 0.94262,
-    "yellowing of eyes": 0.94262,
-    "abdominal pain": 0.94262,
     "fatigue": 0.94262,
+    "yellowing of eyes": 0.94262,
     "loss of appetite": 0.94262,
     "joint pain": 0.94262,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "nausea": 0.94262,
+    "abdominal pain": 0.94262,
     "dark urine": 0.94262
    },
    "precautions": [
@@ -292,10 +292,10 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "skin rash": 0.89344,
+    "spotting urination": 0.89344,
     "burning micturition": 0.89344,
     "itching": 0.94262,
-    "spotting urination": 0.89344,
-    "skin rash": 0.89344,
     "stomach pain": 0.89344
    },
    "precautions": [
@@ -325,16 +325,16 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "malaise": 0.9918,
-    "yellowish skin": 0.94262,
-    "lethargy": 0.94262,
-    "yellowing of eyes": 0.9918,
-    "itching": 0.94262,
-    "abdominal pain": 0.94262,
     "fatigue": 0.94262,
-    "loss of appetite": 0.94262,
-    "dark urine": 0.94262,
     "receiving blood transfusion": 0.9918,
+    "yellowing of eyes": 0.9918,
+    "loss of appetite": 0.94262,
+    "malaise": 0.9918,
+    "lethargy": 0.94262,
+    "dark urine": 0.94262,
+    "yellowish skin": 0.94262,
+    "abdominal pain": 0.94262,
+    "itching": 0.94262,
     "receiving unsterile injections": 0.9918,
     "yellow urine": 0.94262
    },
@@ -350,8 +350,8 @@
    "record_count": 120,
    "symptom_probs": {
     "burning micturition": 0.89344,
-    "foul smell of urine": 0.84426,
     "bladder discomfort": 0.94262,
+    "foul smell of urine": 0.84426,
     "continuous feel of urine": 0.94262
    },
    "precautions": [
@@ -365,19 +365,19 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "fatigue": 0.89344,
     "mood swings": 0.94262,
-    "dizziness": 0.94262,
-    "weight gain": 0.94262,
-    "brittle nails": 0.9918,
-    "cold hands and feets": 0.94262,
-    "depression": 0.9918,
-    "enlarged thyroid": 0.9918,
     "abnormal menstruation": 0.9918,
     "swollen extremeties": 0.9918,
-    "irritability": 0.9918,
+    "cold hands and feets": 0.94262,
     "lethargy": 0.94262,
-    "fatigue": 0.89344,
-    "puffy face and eyes": 0.94262
+    "puffy face and eyes": 0.94262,
+    "dizziness": 0.94262,
+    "irritability": 0.9918,
+    "weight gain": 0.94262,
+    "brittle nails": 0.9918,
+    "depression": 0.9918,
+    "enlarged thyroid": 0.9918
    },
    "precautions": [
     "reduce stress",
@@ -390,17 +390,17 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "mild fever": 0.94262,
-    "high fever": 0.94262,
-    "headache": 0.94262,
-    "lethargy": 0.94262,
-    "itching": 0.94262,
-    "swelled lymph nodes": 0.94262,
-    "skin rash": 0.94262,
     "fatigue": 0.94262,
     "loss of appetite": 0.94262,
+    "swelled lymph nodes": 0.94262,
     "malaise": 0.9918,
-    "red spots over body": 0.9918
+    "lethargy": 0.94262,
+    "mild fever": 0.94262,
+    "skin rash": 0.94262,
+    "red spots over body": 0.9918,
+    "itching": 0.94262,
+    "high fever": 0.94262,
+    "headache": 0.94262
    },
    "precautions": [
     "use neem in bathing",
@@ -413,9 +413,9 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "chest pain": 0.94262,
     "vomiting": 0.89344,
     "breathlessness": 0.89344,
-    "chest pain": 0.94262,
     "sweating": 0.89344
    },
    "precautions": [
@@ -429,9 +429,9 @@
    "record_count": 120,
    "symptom_probs": {
     "vomiting": 0.89344,
-    "weakness of one body side": 0.89344,
     "altered sensorium": 0.94262,
-    "headache": 0.89344
+    "headache": 0.89344,
+    "weakness of one body side": 0.89344
    },
    "precautions": [
     "massage",
@@ -444,14 +444,14 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
-    "sweating": 0.94262,
-    "diarrhoea": 0.89344,
-    "muscle pain": 0.9918,
-    "headache": 0.94262,
-    "vomiting": 0.94262,
     "chills": 0.94262,
-    "high fever": 0.94262
+    "vomiting": 0.94262,
+    "sweating": 0.94262,
+    "nausea": 0.94262,
+    "diarrhoea": 0.89344,
+    "high fever": 0.94262,
+    "headache": 0.94262,
+    "muscle pain": 0.9918
    },
    "precautions": [
     "Consult nearest hospital",
@@ -466,9 +466,9 @@
    "symptom_probs": {
     "unsteadiness": 0.94262,
     "loss of balance": 0.94262,
-    "headache": 0.94262,
     "vomiting": 0.94262,
     "spinning movements": 0.89344,
+    "headache": 0.94262,
     "nausea": 0.94262
    },
    "precautions": [
@@ -482,21 +482,21 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "cough": 0.94262,
-    "chest pain": 0.9918,
-    "mild fever": 0.9918,
-    "weight loss": 0.94262,
-    "sweating": 0.94262,
-    "blood in sputum": 0.9918,
-    "phlegm": 0.9918,
-    "high fever": 0.94262,
+    "fatigue": 0.94262,
     "yellowing of eyes": 0.9918,
+    "loss of appetite": 0.9918,
     "chills": 0.94262,
     "swelled lymph nodes": 0.9918,
-    "fatigue": 0.94262,
-    "breathlessness": 0.94262,
-    "loss of appetite": 0.9918,
     "malaise": 0.9918,
+    "chest pain": 0.9918,
+    "mild fever": 0.9918,
+    "blood in sputum": 0.9918,
+    "phlegm": 0.9918,
+    "sweating": 0.94262,
+    "breathlessness": 0.94262,
+    "weight loss": 0.94262,
+    "high fever": 0.94262,
+    "cough": 0.94262,
     "vomiting": 0.94262
    },
    "precautions": [
@@ -511,9 +511,9 @@
    "record_count": 120,
    "symptom_probs": {
     "dizziness": 0.89344,
-    "chest pain": 0.89344,
-    "lack of concentration": 0.94262,
     "loss of balance": 0.94262,
+    "lack of concentration": 0.94262,
+    "chest pain": 0.89344,
     "headache": 0.89344
    },
    "precautions": [
@@ -527,12 +527,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "cough": 0.89344,
-    "high fever": 0.94262,
-    "family history": 0.94262,
     "fatigue": 0.89344,
+    "mucoid sputum": 0.94262,
     "breathlessness": 0.94262,
-    "mucoid sputum": 0.94262
+    "family history": 0.94262,
+    "high fever": 0.94262,
+    "cough": 0.89344
    },
    "precautions": [
     "switch to loose cloothing",
@@ -545,9 +545,9 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "pain during bowel movements": 0.94262,
     "bloody stool": 0.94262,
     "pain in anal region": 0.94262,
-    "pain during bowel movements": 0.94262,
     "constipation": 0.94262,
     "irritation in anus": 0.94262
    },
@@ -562,12 +562,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
-    "yellowish skin": 0.94262,
-    "yellowing of eyes": 0.89344,
-    "family history": 0.94262,
     "fatigue": 0.94262,
-    "loss of appetite": 0.94262
+    "yellowing of eyes": 0.89344,
+    "loss of appetite": 0.94262,
+    "yellowish skin": 0.94262,
+    "nausea": 0.94262,
+    "family history": 0.94262
    },
    "precautions": [
     "Consult nearest hospital",
@@ -580,18 +580,18 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "acute liver failure": 0.94262,
-    "nausea": 0.94262,
+    "fatigue": 0.94262,
+    "yellowing of eyes": 0.9918,
+    "loss of appetite": 0.9918,
     "coma": 0.9918,
-    "stomach bleeding": 0.9918,
+    "dark urine": 0.94262,
     "yellowish skin": 0.94262,
     "vomiting": 0.94262,
-    "yellowing of eyes": 0.9918,
-    "fatigue": 0.94262,
+    "nausea": 0.94262,
     "abdominal pain": 0.9918,
+    "stomach bleeding": 0.9918,
     "high fever": 0.94262,
-    "loss of appetite": 0.9918,
-    "dark urine": 0.94262,
+    "acute liver failure": 0.94262,
     "joint pain": 0.94262
    },
    "precautions": [
@@ -605,16 +605,16 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
+    "fatigue": 0.9918,
     "belly pain": 0.94262,
-    "diarrhoea": 0.94262,
-    "toxic look (typhos)": 0.94262,
-    "high fever": 0.9918,
-    "headache": 0.94262,
     "chills": 0.9918,
     "constipation": 0.94262,
-    "fatigue": 0.9918,
+    "nausea": 0.94262,
     "abdominal pain": 0.94262,
+    "toxic look (typhos)": 0.94262,
+    "diarrhoea": 0.94262,
+    "high fever": 0.9918,
+    "headache": 0.94262,
     "vomiting": 0.94262
    },
    "precautions": [
@@ -628,13 +628,13 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "weight loss": 0.94262,
-    "high fever": 0.94262,
-    "yellowish skin": 0.94262,
-    "itching": 0.94262,
-    "abdominal pain": 0.94262,
     "fatigue": 0.94262,
     "dark urine": 0.94262,
+    "yellowish skin": 0.94262,
+    "abdominal pain": 0.94262,
+    "itching": 0.94262,
+    "weight loss": 0.94262,
+    "high fever": 0.94262,
     "vomiting": 0.94262
    },
    "precautions": [
@@ -648,9 +648,9 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
+    "back pain": 0.89344,
     "dizziness": 0.94262,
     "loss of balance": 0.94262,
-    "back pain": 0.89344,
     "neck pain": 0.94262,
     "weakness in limbs": 0.89344
    },
@@ -665,18 +665,18 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
-    "excessive hunger": 0.9918,
-    "drying and tingling lips": 0.94262,
-    "sweating": 0.94262,
-    "headache": 0.94262,
-    "vomiting": 0.94262,
+    "fatigue": 0.94262,
     "anxiety": 0.94262,
+    "blurred and distorted vision": 0.94262,
+    "excessive hunger": 0.9918,
+    "slurred speech": 0.9918,
+    "vomiting": 0.94262,
+    "sweating": 0.94262,
+    "nausea": 0.94262,
     "irritability": 0.9918,
     "palpitations": 0.9918,
-    "fatigue": 0.94262,
-    "slurred speech": 0.9918,
-    "blurred and distorted vision": 0.94262
+    "drying and tingling lips": 0.94262,
+    "headache": 0.94262
    },
    "precautions": [
     "lie down on side",
@@ -689,10 +689,10 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "dischromic patches": 0.89344,
+    "skin rash": 0.89344,
     "nodal skin eruptions": 0.89344,
-    "itching": 0.89344,
-    "skin rash": 0.89344
+    "dischromic patches": 0.89344,
+    "itching": 0.89344
    },
    "precautions": [
     "bath twice",
@@ -705,12 +705,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "cough": 0.94262,
+    "stomach pain": 0.94262,
+    "acidity": 0.89344,
     "chest pain": 0.94262,
     "ulcers on tongue": 0.89344,
     "vomiting": 0.89344,
-    "acidity": 0.89344,
-    "stomach pain": 0.94262
+    "cough": 0.94262
    },
    "precautions": [
     "avoid fatty spicy food",
@@ -723,19 +723,19 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.9918,
-    "back pain": 0.9918,
-    "muscle pain": 0.94262,
-    "high fever": 0.94262,
-    "headache": 0.9918,
-    "vomiting": 0.94262,
-    "chills": 0.94262,
-    "skin rash": 0.94262,
     "fatigue": 0.94262,
-    "pain behind the eyes": 0.9918,
+    "back pain": 0.9918,
     "loss of appetite": 0.9918,
+    "chills": 0.94262,
     "malaise": 0.94262,
     "joint pain": 0.94262,
+    "skin rash": 0.94262,
+    "vomiting": 0.94262,
+    "pain behind the eyes": 0.9918,
+    "nausea": 0.9918,
+    "high fever": 0.94262,
+    "headache": 0.9918,
+    "muscle pain": 0.94262,
     "red spots over body": 0.94262
    },
    "precautions": [
@@ -749,17 +749,17 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "mood swings": 0.94262,
-    "excessive hunger": 0.94262,
-    "weight loss": 0.94262,
-    "sweating": 0.94262,
-    "diarrhoea": 0.94262,
-    "abnormal menstruation": 0.9918,
-    "irritability": 0.9918,
-    "muscle weakness": 0.9918,
     "fatigue": 0.94262,
+    "mood swings": 0.94262,
     "restlessness": 0.94262,
-    "fast heart rate": 0.94262
+    "abnormal menstruation": 0.9918,
+    "excessive hunger": 0.94262,
+    "fast heart rate": 0.94262,
+    "muscle weakness": 0.9918,
+    "sweating": 0.94262,
+    "irritability": 0.9918,
+    "diarrhoea": 0.94262,
+    "weight loss": 0.94262
    },
    "precautions": [
     "eat healthy",
@@ -772,12 +772,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "hip joint pain": 0.94262,
     "swelling joints": 0.94262,
-    "painful walking": 0.94262,
+    "joint pain": 0.94262,
     "knee pain": 0.94262,
+    "painful walking": 0.94262,
     "neck pain": 0.94262,
-    "joint pain": 0.94262
+    "hip joint pain": 0.94262
    },
    "precautions": [
     "acetaminophen",
@@ -790,12 +790,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "small dents in nails": 0.94262,
     "inflammatory nails": 0.94262,
-    "silver like dusting": 0.94262,
+    "joint pain": 0.94262,
     "skin peeling": 0.94262,
     "skin rash": 0.94262,
-    "joint pain": 0.94262
+    "small dents in nails": 0.94262,
+    "silver like dusting": 0.94262
    },
    "precautions": [
     "wash hands with warm soapy water",
@@ -808,17 +808,17 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "cough": 0.94262,
-    "chest pain": 0.9918,
-    "rusty sputum": 0.9918,
-    "sweating": 0.94262,
-    "phlegm": 0.94262,
-    "high fever": 0.94262,
-    "chills": 0.94262,
     "fatigue": 0.94262,
-    "breathlessness": 0.94262,
+    "chest pain": 0.9918,
+    "chills": 0.94262,
     "malaise": 0.94262,
-    "fast heart rate": 0.9918
+    "fast heart rate": 0.9918,
+    "rusty sputum": 0.9918,
+    "phlegm": 0.94262,
+    "sweating": 0.94262,
+    "breathlessness": 0.94262,
+    "high fever": 0.94262,
+    "cough": 0.94262
    },
    "precautions": [
     "consult doctor",
@@ -831,15 +831,15 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "excessive hunger": 0.94262,
-    "weight loss": 0.94262,
-    "obesity": 0.94262,
-    "lethargy": 0.94262,
-    "polyuria": 0.9918,
-    "increased appetite": 0.9918,
-    "irregular sugar level": 0.94262,
     "restlessness": 0.94262,
     "blurred and distorted vision": 0.94262,
+    "excessive hunger": 0.94262,
+    "lethargy": 0.94262,
+    "polyuria": 0.9918,
+    "obesity": 0.94262,
+    "weight loss": 0.94262,
+    "irregular sugar level": 0.94262,
+    "increased appetite": 0.9918,
     "fatigue": 0.94262
    },
    "precautions": [
@@ -853,12 +853,12 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "vomiting": 0.94262,
-    "internal itching": 0.94262,
     "passage of gases": 0.94262,
-    "abdominal pain": 0.94262,
     "loss of appetite": 0.89344,
-    "indigestion": 0.89344
+    "indigestion": 0.89344,
+    "vomiting": 0.94262,
+    "abdominal pain": 0.94262,
+    "internal itching": 0.94262
    },
    "precautions": [
     "avoid fatty spicy food",
@@ -871,16 +871,16 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
-    "mild fever": 0.9918,
-    "diarrhoea": 0.94262,
-    "muscle pain": 0.9918,
-    "yellowish skin": 0.94262,
-    "vomiting": 0.94262,
     "yellowing of eyes": 0.9918,
     "loss of appetite": 0.94262,
-    "dark urine": 0.94262,
     "joint pain": 0.94262,
+    "mild fever": 0.9918,
+    "dark urine": 0.94262,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "nausea": 0.94262,
+    "diarrhoea": 0.94262,
+    "muscle pain": 0.9918,
     "abdominal pain": 0.94262
    },
    "precautions": [
@@ -894,13 +894,13 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "nausea": 0.94262,
+    "yellowing of eyes": 0.94262,
+    "loss of appetite": 0.94262,
     "yellowish skin": 0.94262,
     "vomiting": 0.94262,
-    "yellowing of eyes": 0.94262,
-    "itching": 0.94262,
+    "nausea": 0.94262,
     "abdominal pain": 0.94262,
-    "loss of appetite": 0.94262
+    "itching": 0.94262
    },
    "precautions": [
     "cold baths",
@@ -914,8 +914,8 @@
    "record_count": 120,
    "symptom_probs": {
     "vomiting": 0.89344,
-    "diarrhoea": 0.94262,
     "dehydration": 0.89344,
+    "diarrhoea": 0.94262,
     "sunken eyes": 0.89344
    },
    "precautions": [
@@ -929,23 +929,23 @@
    "prior": 0.02439,
    "record_count": 120,
    "symptom_probs": {
-    "cough": 0.94262,
+    "fatigue": 0.94262,
+    "runny nose": 0.9918,
+    "swelled lymph nodes": 0.94262,
+    "chills": 0.94262,
+    "headache": 0.94262,
+    "malaise": 0.94262,
     "chest pain": 0.9918,
     "throat irritation": 0.9918,
-    "loss of smell": 0.9918,
-    "congestion": 0.9918,
-    "redness of eyes": 0.9918,
     "phlegm": 0.9918,
-    "muscle pain": 0.9918,
-    "high fever": 0.94262,
-    "headache": 0.94262,
-    "continuous sneezing": 0.94262,
-    "runny nose": 0.9918,
-    "chills": 0.94262,
-    "swelled lymph nodes": 0.94262,
-    "fatigue": 0.94262,
+    "redness of eyes": 0.9918,
+    "congestion": 0.9918,
     "sinus pressure": 0.9918,
-    "malaise": 0.94262
+    "loss of smell": 0.9918,
+    "high fever": 0.94262,
+    "muscle pain": 0.9918,
+    "cough": 0.94262,
+    "continuous sneezing": 0.94262
    },
    "precautions": [
     "drink vitamin c rich drinks",

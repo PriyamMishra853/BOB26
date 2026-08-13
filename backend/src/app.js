@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { config } from './config/env.js';
 
 import authRoutes from './routes/auth.routes.js';
 import patientRoutes from './routes/patient.routes.js';
@@ -16,7 +17,21 @@ import callRoutes from './routes/call.routes.js';
 const app = express();
 
 // Middleware
-app.use(cors({ origin: '*' }));
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  'https://virtual-village-clinic.vercel.app' // Replace with actual production URL
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -64,9 +79,21 @@ app.use('/api/admin', adminRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('Unhandled Server Error:', err);
-  res.status(err.status || 500).json({
-    error: 'Internal Server Error',
+  const statusCode = err.status || 500;
+  
+  // Structured logging
+  console.error(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level: 'ERROR',
+    path: req.path,
+    method: req.method,
+    status: statusCode,
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+  }));
+
+  res.status(statusCode).json({
+    error: statusCode === 500 ? 'Internal Server Error' : 'Request Error',
     message: err.message || 'An unexpected error occurred.'
   });
 });

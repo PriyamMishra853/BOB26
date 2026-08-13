@@ -19,34 +19,62 @@ import json
 import math
 import os
 import random
+import logging
+import argparse
 from collections import defaultdict
+from typing import Tuple, List, Dict, Set, Any
 
 import kagglehub
 import pandas as pd
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_PATH = os.path.join(REPO_ROOT, "backend", "src", "data", "disease_symptom_model.json")
-ALPHA = 1.0          # Laplace smoothing
-TEST_FRACTION = 0.2
-SEED = 42
+# Setup logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_OUTPUT_PATH = os.path.join(REPO_ROOT, "backend", "src", "data", "disease_symptom_model.json")
+DEFAULT_ALPHA = 1.0          # Laplace smoothing
+DEFAULT_TEST_FRACTION = 0.2
+DEFAULT_SEED = 42
 
 def normalize_symptom(raw: str) -> str:
+    """Normalize symptom string."""
     return " ".join(str(raw).strip().lower().replace("_", " ").split())
 
+def load_dataset() -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Download and load dataset."""
+    logger.info("Downloading dataset from Kaggle...")
+    try:
+        path = kagglehub.dataset_download("choongqianzheng/disease-and-symptoms-dataset")
+    except Exception as e:
+        logger.error(f"Failed to download dataset from Kaggle: {e}")
+        raise
 
-def load_dataset():
-    path = kagglehub.dataset_download("choongqianzheng/disease-and-symptoms-dataset")
-    symptoms_df = pd.read_csv(os.path.join(path, "DiseaseAndSymptoms.csv"))
-    precautions_df = pd.read_csv(os.path.join(path, "Disease precaution.csv"))
+    try:
+        symptoms_df = pd.read_csv(os.path.join(path, "DiseaseAndSymptoms.csv"))
+        precautions_df = pd.read_csv(os.path.join(path, "Disease precaution.csv"))
+    except FileNotFoundError as e:
+        logger.error(f"Dataset files not found: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Error reading CSV files: {e}")
+        raise
+
     return symptoms_df, precautions_df
 
+def to_records(symptoms_df: pd.DataFrame) -> List[Tuple[str, Set[str]]]:
+    """Convert dataframe to a list of disease-symptoms records."""
+    if "Disease" not in symptoms_df.columns:
+        raise KeyError("Column 'Disease' missing from symptoms dataset.")
 
-def to_records(symptoms_df):
     symptom_cols = [c for c in symptoms_df.columns if c.startswith("Symptom_")]
     records = []
+    
     for _, row in symptoms_df.iterrows():
         disease = str(row["Disease"]).strip()
+        if not disease or disease.lower() == 'nan':
+            continue
+            
         symptoms = {
             normalize_symptom(row[c])
             for c in symptom_cols
@@ -56,12 +84,11 @@ def to_records(symptoms_df):
             records.append((disease, symptoms))
     return records
 
-
-def train(records):
+def train(records: List[Tuple[str, Set[str]]], alpha: float) -> Tuple[Dict[str, Any], List[str]]:
     """Bernoulli NB: per-disease symptom probabilities + priors."""
-    disease_counts = defaultdict(int)
-    symptom_counts = defaultdict(lambda: defaultdict(int))
-    vocabulary = set()
+    disease_counts: Dict[str, int] = defaultdict(int)
+    symptom_counts: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    vocabulary: Set[str] = set()
 
     for disease, symptoms in records:
         disease_counts[disease] += 1
@@ -73,7 +100,7 @@ def train(records):
     model = {}
     for disease, n in disease_counts.items():
         probs = {
-            s: (symptom_counts[disease][s] + ALPHA) / (n + 2 * ALPHA)
+            s: (symptom_counts[disease][s] + alpha) / (n + 2 * alpha)
             for s in symptom_counts[disease]
         }
         model[disease] = {
@@ -83,26 +110,27 @@ def train(records):
         }
     return model, sorted(vocabulary)
 
-
-def predict(model, vocabulary, symptoms, default_prob=None):
+def predict(model: Dict[str, Any], vocabulary: List[str], symptoms: Set[str], alpha: float) -> List[Tuple[str, float]]:
     """Return diseases ranked by log-posterior."""
     scores = {}
     vocab_set = set(vocabulary)
     present = {s for s in symptoms if s in vocab_set}
+    
     for disease, params in model.items():
         logp = math.log(params["prior"])
         n = params["record_count"]
-        absent_prob = ALPHA / (n + 2 * ALPHA)  # unseen symptom for this disease
+        absent_prob = alpha / (n + 2 * alpha)  # unseen symptom for this disease
         for s in present:
             logp += math.log(params["symptom_probs"].get(s, absent_prob))
         scores[disease] = logp
+        
     return sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
 
-
-def evaluate(model, vocabulary, test_records):
+def evaluate(model: Dict[str, Any], vocabulary: List[str], test_records: List[Tuple[str, Set[str]]], alpha: float) -> Tuple[float, float]:
+    """Evaluate top-1 and top-3 accuracy on the test set."""
     top1 = top3 = 0
     for disease, symptoms in test_records:
-        ranking = [d for d, _ in predict(model, vocabulary, symptoms)[:3]]
+        ranking = [d for d, _ in predict(model, vocabulary, symptoms, alpha)[:3]]
         if ranking and ranking[0] == disease:
             top1 += 1
         if disease in ranking:
@@ -110,42 +138,63 @@ def evaluate(model, vocabulary, test_records):
     n = len(test_records) or 1
     return top1 / n, top3 / n
 
-
 def main():
-    print("1/5 Downloading dataset from Kaggle...")
-    symptoms_df, precautions_df = load_dataset()
-    records = to_records(symptoms_df)
-    print(f"    {len(records)} records, {symptoms_df['Disease'].nunique()} diseases")
+    parser = argparse.ArgumentParser(description="Train Disease & Symptom Model")
+    parser.add_argument("--output", type=str, default=DEFAULT_OUTPUT_PATH, help="Output path for the JSON model")
+    parser.add_argument("--alpha", type=float, default=DEFAULT_ALPHA, help="Laplace smoothing parameter")
+    parser.add_argument("--test-fraction", type=float, default=DEFAULT_TEST_FRACTION, help="Fraction of data to use for testing")
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="Random seed for data splitting")
+    
+    args = parser.parse_args()
 
-    print("2/5 Splitting train/test...")
-    random.Random(SEED).shuffle(records)
-    split = int(len(records) * (1 - TEST_FRACTION))
+    logger.info("Step 1/5: Loading dataset")
+    try:
+        symptoms_df, precautions_df = load_dataset()
+    except Exception:
+        logger.critical("Failed to load dataset. Exiting.")
+        return
+
+    try:
+        records = to_records(symptoms_df)
+    except Exception as e:
+        logger.critical(f"Failed to parse records: {e}")
+        return
+
+    logger.info(f"Loaded {len(records)} records for {symptoms_df.get('Disease', pd.Series()).nunique()} diseases")
+
+    logger.info("Step 2/5: Splitting train/test")
+    random.Random(args.seed).shuffle(records)
+    split = int(len(records) * (1 - args.test_fraction))
     train_records, test_records = records[:split], records[split:]
+    logger.info(f"Train size: {len(train_records)}, Test size: {len(test_records)}")
 
-    print("3/5 Training Bernoulli Naive Bayes...")
-    model, vocabulary = train(train_records)
+    logger.info("Step 3/5: Training Bernoulli Naive Bayes")
+    model, vocabulary = train(train_records, args.alpha)
 
-    print("4/5 Evaluating on held-out split...")
-    top1, top3 = evaluate(model, vocabulary, test_records)
-    print(f"    top-1 accuracy: {top1:.3f} | top-3 accuracy: {top3:.3f} ({len(test_records)} test cases)")
+    logger.info("Step 4/5: Evaluating on held-out split")
+    top1, top3 = evaluate(model, vocabulary, test_records, args.alpha)
+    logger.info(f"Top-1 accuracy: {top1:.3f} | Top-3 accuracy: {top3:.3f}")
 
-    print("5/5 Exporting JSON model for the Node backend...")
+    logger.info("Step 5/5: Exporting JSON model for the Node backend")
     precautions = {}
-    for _, row in precautions_df.iterrows():
-        disease = str(row["Disease"]).strip()
-        precautions[disease] = [
-            str(row[c]).strip()
-            for c in precautions_df.columns
-            if c.startswith("Precaution_") and pd.notna(row[c]) and str(row[c]).strip()
-        ]
+    if "Disease" in precautions_df.columns:
+        for _, row in precautions_df.iterrows():
+            disease = str(row["Disease"]).strip()
+            if not disease or disease.lower() == 'nan':
+                continue
+            precautions[disease] = [
+                str(row[c]).strip()
+                for c in precautions_df.columns
+                if c.startswith("Precaution_") and pd.notna(row[c]) and str(row[c]).strip()
+            ]
 
     # Retrain on the FULL dataset for the shipped model
-    full_model, full_vocab = train(records)
+    full_model, full_vocab = train(records, args.alpha)
     export = {
         "meta": {
             "source": "kaggle:choongqianzheng/disease-and-symptoms-dataset",
             "algorithm": "bernoulli-naive-bayes",
-            "alpha": ALPHA,
+            "alpha": args.alpha,
             "trained_records": len(records),
             "diseases": len(full_model),
             "vocabulary_size": len(full_vocab),
@@ -164,11 +213,13 @@ def main():
         },
     }
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w") as f:
-        json.dump(export, f, indent=1)
-    print(f"    Wrote {OUTPUT_PATH} ({os.path.getsize(OUTPUT_PATH) // 1024} KB)")
-
+    try:
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
+        with open(args.output, "w") as f:
+            json.dump(export, f, indent=1)
+        logger.info(f"Successfully wrote {args.output} ({os.path.getsize(args.output) // 1024} KB)")
+    except Exception as e:
+        logger.error(f"Failed to save model JSON: {e}")
 
 if __name__ == "__main__":
     main()
