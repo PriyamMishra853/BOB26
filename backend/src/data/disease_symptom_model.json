@@ -1,0 +1,958 @@
+{
+ "meta": {
+  "source": "kaggle:choongqianzheng/disease-and-symptoms-dataset",
+  "algorithm": "bernoulli-naive-bayes",
+  "alpha": 1.0,
+  "trained_records": 4920,
+  "diseases": 41,
+  "vocabulary_size": 131,
+  "holdout_top1_accuracy": 0.937,
+  "holdout_top3_accuracy": 1.0
+ },
+ "vocabulary": [
+  "abdominal pain",
+  "abnormal menstruation",
+  "acidity",
+  "acute liver failure",
+  "altered sensorium",
+  "anxiety",
+  "back pain",
+  "belly pain",
+  "blackheads",
+  "bladder discomfort",
+  "blister",
+  "blood in sputum",
+  "bloody stool",
+  "blurred and distorted vision",
+  "breathlessness",
+  "brittle nails",
+  "bruising",
+  "burning micturition",
+  "chest pain",
+  "chills",
+  "cold hands and feets",
+  "coma",
+  "congestion",
+  "constipation",
+  "continuous feel of urine",
+  "continuous sneezing",
+  "cough",
+  "cramps",
+  "dark urine",
+  "dehydration",
+  "depression",
+  "diarrhoea",
+  "dischromic patches",
+  "distention of abdomen",
+  "dizziness",
+  "drying and tingling lips",
+  "enlarged thyroid",
+  "excessive hunger",
+  "extra marital contacts",
+  "family history",
+  "fast heart rate",
+  "fatigue",
+  "fluid overload",
+  "foul smell of urine",
+  "headache",
+  "high fever",
+  "hip joint pain",
+  "history of alcohol consumption",
+  "increased appetite",
+  "indigestion",
+  "inflammatory nails",
+  "internal itching",
+  "irregular sugar level",
+  "irritability",
+  "irritation in anus",
+  "itching",
+  "joint pain",
+  "knee pain",
+  "lack of concentration",
+  "lethargy",
+  "loss of appetite",
+  "loss of balance",
+  "loss of smell",
+  "malaise",
+  "mild fever",
+  "mood swings",
+  "movement stiffness",
+  "mucoid sputum",
+  "muscle pain",
+  "muscle wasting",
+  "muscle weakness",
+  "nausea",
+  "neck pain",
+  "nodal skin eruptions",
+  "obesity",
+  "pain behind the eyes",
+  "pain during bowel movements",
+  "pain in anal region",
+  "painful walking",
+  "palpitations",
+  "passage of gases",
+  "patches in throat",
+  "phlegm",
+  "polyuria",
+  "prominent veins on calf",
+  "puffy face and eyes",
+  "pus filled pimples",
+  "receiving blood transfusion",
+  "receiving unsterile injections",
+  "red sore around nose",
+  "red spots over body",
+  "redness of eyes",
+  "restlessness",
+  "runny nose",
+  "rusty sputum",
+  "scurring",
+  "shivering",
+  "silver like dusting",
+  "sinus pressure",
+  "skin peeling",
+  "skin rash",
+  "slurred speech",
+  "small dents in nails",
+  "spinning movements",
+  "spotting urination",
+  "stiff neck",
+  "stomach bleeding",
+  "stomach pain",
+  "sunken eyes",
+  "sweating",
+  "swelled lymph nodes",
+  "swelling joints",
+  "swelling of stomach",
+  "swollen blood vessels",
+  "swollen extremeties",
+  "swollen legs",
+  "throat irritation",
+  "toxic look (typhos)",
+  "ulcers on tongue",
+  "unsteadiness",
+  "visual disturbances",
+  "vomiting",
+  "watering from eyes",
+  "weakness in limbs",
+  "weakness of one body side",
+  "weight gain",
+  "weight loss",
+  "yellow crust ooze",
+  "yellow urine",
+  "yellowing of eyes",
+  "yellowish skin"
+ ],
+ "diseases": {
+  "Impetigo": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "red sore around nose": 0.94262,
+    "yellow crust ooze": 0.94262,
+    "skin rash": 0.94262,
+    "high fever": 0.84426,
+    "blister": 0.94262
+   },
+   "precautions": [
+    "soak affected area in warm water",
+    "use antibiotics",
+    "remove scabs with wet compressed cloth",
+    "consult doctor"
+   ]
+  },
+  "Varicose veins": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "swollen blood vessels": 0.89344,
+    "bruising": 0.94262,
+    "swollen legs": 0.94262,
+    "cramps": 0.94262,
+    "fatigue": 0.94262,
+    "prominent veins on calf": 0.94262,
+    "obesity": 0.94262
+   },
+   "precautions": [
+    "lie down flat and raise the leg high",
+    "use oinments",
+    "use vein compression",
+    "dont stand still for long"
+   ]
+  },
+  "Alcoholic hepatitis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "fluid overload": 0.94262,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "history of alcohol consumption": 0.94262,
+    "distention of abdomen": 0.94262,
+    "abdominal pain": 0.94262,
+    "swelling of stomach": 0.94262
+   },
+   "precautions": [
+    "stop alcohol consumption",
+    "consult doctor",
+    "medication",
+    "follow up"
+   ]
+  },
+  "Arthritis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "swelling joints": 0.94262,
+    "painful walking": 0.94262,
+    "stiff neck": 0.94262,
+    "muscle weakness": 0.94262,
+    "movement stiffness": 0.94262
+   },
+   "precautions": [
+    "exercise",
+    "use hot and cold therapy",
+    "try acupuncture",
+    "massage"
+   ]
+  },
+  "Allergy": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "continuous sneezing": 0.89344,
+    "watering from eyes": 0.89344,
+    "chills": 0.89344,
+    "shivering": 0.89344
+   },
+   "precautions": [
+    "apply calamine",
+    "cover area with bandage",
+    "use ice to compress itching"
+   ]
+  },
+  "Migraine": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "excessive hunger": 0.94262,
+    "depression": 0.94262,
+    "headache": 0.94262,
+    "stiff neck": 0.94262,
+    "irritability": 0.94262,
+    "acidity": 0.94262,
+    "indigestion": 0.94262,
+    "blurred and distorted vision": 0.94262,
+    "visual disturbances": 0.94262
+   },
+   "precautions": [
+    "meditation",
+    "reduce stress",
+    "use poloroid glasses in sun",
+    "consult doctor"
+   ]
+  },
+  "Acne": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "scurring": 0.89344,
+    "blackheads": 0.89344,
+    "pus filled pimples": 0.89344,
+    "skin rash": 0.94262
+   },
+   "precautions": [
+    "bath twice",
+    "avoid fatty spicy food",
+    "drink plenty of water",
+    "avoid too many products"
+   ]
+  },
+  "Hepatitis D": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "yellowing of eyes": 0.94262,
+    "abdominal pain": 0.94262,
+    "fatigue": 0.94262,
+    "loss of appetite": 0.94262,
+    "joint pain": 0.94262,
+    "dark urine": 0.94262
+   },
+   "precautions": [
+    "consult doctor",
+    "medication",
+    "eat healthy",
+    "follow up"
+   ]
+  },
+  "Drug Reaction": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "burning micturition": 0.89344,
+    "itching": 0.94262,
+    "spotting urination": 0.89344,
+    "skin rash": 0.89344,
+    "stomach pain": 0.89344
+   },
+   "precautions": [
+    "stop irritation",
+    "consult nearest hospital",
+    "stop taking drug",
+    "follow up"
+   ]
+  },
+  "AIDS": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "high fever": 0.94262,
+    "extra marital contacts": 0.89344,
+    "patches in throat": 0.89344,
+    "muscle wasting": 0.89344
+   },
+   "precautions": [
+    "avoid open cuts",
+    "wear ppe if possible",
+    "consult doctor",
+    "follow up"
+   ]
+  },
+  "Hepatitis B": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "malaise": 0.9918,
+    "yellowish skin": 0.94262,
+    "lethargy": 0.94262,
+    "yellowing of eyes": 0.9918,
+    "itching": 0.94262,
+    "abdominal pain": 0.94262,
+    "fatigue": 0.94262,
+    "loss of appetite": 0.94262,
+    "dark urine": 0.94262,
+    "receiving blood transfusion": 0.9918,
+    "receiving unsterile injections": 0.9918,
+    "yellow urine": 0.94262
+   },
+   "precautions": [
+    "consult nearest hospital",
+    "vaccination",
+    "eat healthy",
+    "medication"
+   ]
+  },
+  "Urinary tract infection": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "burning micturition": 0.89344,
+    "foul smell of urine": 0.84426,
+    "bladder discomfort": 0.94262,
+    "continuous feel of urine": 0.94262
+   },
+   "precautions": [
+    "drink plenty of water",
+    "increase vitamin c intake",
+    "drink cranberry juice",
+    "take probiotics"
+   ]
+  },
+  "Hypothyroidism": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "mood swings": 0.94262,
+    "dizziness": 0.94262,
+    "weight gain": 0.94262,
+    "brittle nails": 0.9918,
+    "cold hands and feets": 0.94262,
+    "depression": 0.9918,
+    "enlarged thyroid": 0.9918,
+    "abnormal menstruation": 0.9918,
+    "swollen extremeties": 0.9918,
+    "irritability": 0.9918,
+    "lethargy": 0.94262,
+    "fatigue": 0.89344,
+    "puffy face and eyes": 0.94262
+   },
+   "precautions": [
+    "reduce stress",
+    "exercise",
+    "eat healthy",
+    "get proper sleep"
+   ]
+  },
+  "Chicken pox": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "mild fever": 0.94262,
+    "high fever": 0.94262,
+    "headache": 0.94262,
+    "lethargy": 0.94262,
+    "itching": 0.94262,
+    "swelled lymph nodes": 0.94262,
+    "skin rash": 0.94262,
+    "fatigue": 0.94262,
+    "loss of appetite": 0.94262,
+    "malaise": 0.9918,
+    "red spots over body": 0.9918
+   },
+   "precautions": [
+    "use neem in bathing",
+    "consume neem leaves",
+    "take vaccine",
+    "avoid public places"
+   ]
+  },
+  "Heart attack": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "vomiting": 0.89344,
+    "breathlessness": 0.89344,
+    "chest pain": 0.94262,
+    "sweating": 0.89344
+   },
+   "precautions": [
+    "call ambulance",
+    "chew or swallow asprin",
+    "keep calm"
+   ]
+  },
+  "Paralysis (brain hemorrhage)": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "vomiting": 0.89344,
+    "weakness of one body side": 0.89344,
+    "altered sensorium": 0.94262,
+    "headache": 0.89344
+   },
+   "precautions": [
+    "massage",
+    "eat healthy",
+    "exercise",
+    "consult doctor"
+   ]
+  },
+  "Malaria": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "sweating": 0.94262,
+    "diarrhoea": 0.89344,
+    "muscle pain": 0.9918,
+    "headache": 0.94262,
+    "vomiting": 0.94262,
+    "chills": 0.94262,
+    "high fever": 0.94262
+   },
+   "precautions": [
+    "Consult nearest hospital",
+    "avoid oily food",
+    "avoid non veg food",
+    "keep mosquitos out"
+   ]
+  },
+  "(vertigo) Paroymsal  Positional Vertigo": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "unsteadiness": 0.94262,
+    "loss of balance": 0.94262,
+    "headache": 0.94262,
+    "vomiting": 0.94262,
+    "spinning movements": 0.89344,
+    "nausea": 0.94262
+   },
+   "precautions": [
+    "lie down",
+    "avoid sudden change in body",
+    "avoid abrupt head movment",
+    "relax"
+   ]
+  },
+  "Tuberculosis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "cough": 0.94262,
+    "chest pain": 0.9918,
+    "mild fever": 0.9918,
+    "weight loss": 0.94262,
+    "sweating": 0.94262,
+    "blood in sputum": 0.9918,
+    "phlegm": 0.9918,
+    "high fever": 0.94262,
+    "yellowing of eyes": 0.9918,
+    "chills": 0.94262,
+    "swelled lymph nodes": 0.9918,
+    "fatigue": 0.94262,
+    "breathlessness": 0.94262,
+    "loss of appetite": 0.9918,
+    "malaise": 0.9918,
+    "vomiting": 0.94262
+   },
+   "precautions": [
+    "cover mouth",
+    "consult doctor",
+    "medication",
+    "rest"
+   ]
+  },
+  "Hypertension": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "dizziness": 0.89344,
+    "chest pain": 0.89344,
+    "lack of concentration": 0.94262,
+    "loss of balance": 0.94262,
+    "headache": 0.89344
+   },
+   "precautions": [
+    "meditation",
+    "salt baths",
+    "reduce stress",
+    "get proper sleep"
+   ]
+  },
+  "Bronchial Asthma": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "cough": 0.89344,
+    "high fever": 0.94262,
+    "family history": 0.94262,
+    "fatigue": 0.89344,
+    "breathlessness": 0.94262,
+    "mucoid sputum": 0.94262
+   },
+   "precautions": [
+    "switch to loose cloothing",
+    "take deep breaths",
+    "get away from trigger",
+    "seek help"
+   ]
+  },
+  "Dimorphic hemmorhoids(piles)": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "bloody stool": 0.94262,
+    "pain in anal region": 0.94262,
+    "pain during bowel movements": 0.94262,
+    "constipation": 0.94262,
+    "irritation in anus": 0.94262
+   },
+   "precautions": [
+    "avoid fatty spicy food",
+    "consume witch hazel",
+    "warm bath with epsom salt",
+    "consume alovera juice"
+   ]
+  },
+  "Hepatitis C": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "yellowish skin": 0.94262,
+    "yellowing of eyes": 0.89344,
+    "family history": 0.94262,
+    "fatigue": 0.94262,
+    "loss of appetite": 0.94262
+   },
+   "precautions": [
+    "Consult nearest hospital",
+    "vaccination",
+    "eat healthy",
+    "medication"
+   ]
+  },
+  "Hepatitis E": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "acute liver failure": 0.94262,
+    "nausea": 0.94262,
+    "coma": 0.9918,
+    "stomach bleeding": 0.9918,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "yellowing of eyes": 0.9918,
+    "fatigue": 0.94262,
+    "abdominal pain": 0.9918,
+    "high fever": 0.94262,
+    "loss of appetite": 0.9918,
+    "dark urine": 0.94262,
+    "joint pain": 0.94262
+   },
+   "precautions": [
+    "stop alcohol consumption",
+    "rest",
+    "consult doctor",
+    "medication"
+   ]
+  },
+  "Typhoid": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "belly pain": 0.94262,
+    "diarrhoea": 0.94262,
+    "toxic look (typhos)": 0.94262,
+    "high fever": 0.9918,
+    "headache": 0.94262,
+    "chills": 0.9918,
+    "constipation": 0.94262,
+    "fatigue": 0.9918,
+    "abdominal pain": 0.94262,
+    "vomiting": 0.94262
+   },
+   "precautions": [
+    "eat high calorie vegitables",
+    "antiboitic therapy",
+    "consult doctor",
+    "medication"
+   ]
+  },
+  "Jaundice": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "weight loss": 0.94262,
+    "high fever": 0.94262,
+    "yellowish skin": 0.94262,
+    "itching": 0.94262,
+    "abdominal pain": 0.94262,
+    "fatigue": 0.94262,
+    "dark urine": 0.94262,
+    "vomiting": 0.94262
+   },
+   "precautions": [
+    "drink plenty of water",
+    "consume milk thistle",
+    "eat fruits and high fiberous food",
+    "medication"
+   ]
+  },
+  "Cervical spondylosis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "dizziness": 0.94262,
+    "loss of balance": 0.94262,
+    "back pain": 0.89344,
+    "neck pain": 0.94262,
+    "weakness in limbs": 0.89344
+   },
+   "precautions": [
+    "use heating pad or cold pack",
+    "exercise",
+    "take otc pain reliver",
+    "consult doctor"
+   ]
+  },
+  "Hypoglycemia": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "excessive hunger": 0.9918,
+    "drying and tingling lips": 0.94262,
+    "sweating": 0.94262,
+    "headache": 0.94262,
+    "vomiting": 0.94262,
+    "anxiety": 0.94262,
+    "irritability": 0.9918,
+    "palpitations": 0.9918,
+    "fatigue": 0.94262,
+    "slurred speech": 0.9918,
+    "blurred and distorted vision": 0.94262
+   },
+   "precautions": [
+    "lie down on side",
+    "check in pulse",
+    "drink sugary drinks",
+    "consult doctor"
+   ]
+  },
+  "Fungal infection": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "dischromic patches": 0.89344,
+    "nodal skin eruptions": 0.89344,
+    "itching": 0.89344,
+    "skin rash": 0.89344
+   },
+   "precautions": [
+    "bath twice",
+    "use detol or neem in bathing water",
+    "keep infected area dry",
+    "use clean cloths"
+   ]
+  },
+  "GERD": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "cough": 0.94262,
+    "chest pain": 0.94262,
+    "ulcers on tongue": 0.89344,
+    "vomiting": 0.89344,
+    "acidity": 0.89344,
+    "stomach pain": 0.94262
+   },
+   "precautions": [
+    "avoid fatty spicy food",
+    "avoid lying down after eating",
+    "maintain healthy weight",
+    "exercise"
+   ]
+  },
+  "Dengue": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.9918,
+    "back pain": 0.9918,
+    "muscle pain": 0.94262,
+    "high fever": 0.94262,
+    "headache": 0.9918,
+    "vomiting": 0.94262,
+    "chills": 0.94262,
+    "skin rash": 0.94262,
+    "fatigue": 0.94262,
+    "pain behind the eyes": 0.9918,
+    "loss of appetite": 0.9918,
+    "malaise": 0.94262,
+    "joint pain": 0.94262,
+    "red spots over body": 0.94262
+   },
+   "precautions": [
+    "drink papaya leaf juice",
+    "avoid fatty spicy food",
+    "keep mosquitos away",
+    "keep hydrated"
+   ]
+  },
+  "Hyperthyroidism": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "mood swings": 0.94262,
+    "excessive hunger": 0.94262,
+    "weight loss": 0.94262,
+    "sweating": 0.94262,
+    "diarrhoea": 0.94262,
+    "abnormal menstruation": 0.9918,
+    "irritability": 0.9918,
+    "muscle weakness": 0.9918,
+    "fatigue": 0.94262,
+    "restlessness": 0.94262,
+    "fast heart rate": 0.94262
+   },
+   "precautions": [
+    "eat healthy",
+    "massage",
+    "use lemon balm",
+    "take radioactive iodine treatment"
+   ]
+  },
+  "Osteoarthristis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "hip joint pain": 0.94262,
+    "swelling joints": 0.94262,
+    "painful walking": 0.94262,
+    "knee pain": 0.94262,
+    "neck pain": 0.94262,
+    "joint pain": 0.94262
+   },
+   "precautions": [
+    "acetaminophen",
+    "consult nearest hospital",
+    "follow up",
+    "salt baths"
+   ]
+  },
+  "Psoriasis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "small dents in nails": 0.94262,
+    "inflammatory nails": 0.94262,
+    "silver like dusting": 0.94262,
+    "skin peeling": 0.94262,
+    "skin rash": 0.94262,
+    "joint pain": 0.94262
+   },
+   "precautions": [
+    "wash hands with warm soapy water",
+    "stop bleeding using pressure",
+    "consult doctor",
+    "salt baths"
+   ]
+  },
+  "Pneumonia": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "cough": 0.94262,
+    "chest pain": 0.9918,
+    "rusty sputum": 0.9918,
+    "sweating": 0.94262,
+    "phlegm": 0.94262,
+    "high fever": 0.94262,
+    "chills": 0.94262,
+    "fatigue": 0.94262,
+    "breathlessness": 0.94262,
+    "malaise": 0.94262,
+    "fast heart rate": 0.9918
+   },
+   "precautions": [
+    "consult doctor",
+    "medication",
+    "rest",
+    "follow up"
+   ]
+  },
+  "Diabetes": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "excessive hunger": 0.94262,
+    "weight loss": 0.94262,
+    "obesity": 0.94262,
+    "lethargy": 0.94262,
+    "polyuria": 0.9918,
+    "increased appetite": 0.9918,
+    "irregular sugar level": 0.94262,
+    "restlessness": 0.94262,
+    "blurred and distorted vision": 0.94262,
+    "fatigue": 0.94262
+   },
+   "precautions": [
+    "have balanced diet",
+    "exercise",
+    "consult doctor",
+    "follow up"
+   ]
+  },
+  "Peptic ulcer diseae": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "vomiting": 0.94262,
+    "internal itching": 0.94262,
+    "passage of gases": 0.94262,
+    "abdominal pain": 0.94262,
+    "loss of appetite": 0.89344,
+    "indigestion": 0.89344
+   },
+   "precautions": [
+    "avoid fatty spicy food",
+    "consume probiotic food",
+    "eliminate milk",
+    "limit alcohol"
+   ]
+  },
+  "hepatitis A": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "mild fever": 0.9918,
+    "diarrhoea": 0.94262,
+    "muscle pain": 0.9918,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "yellowing of eyes": 0.9918,
+    "loss of appetite": 0.94262,
+    "dark urine": 0.94262,
+    "joint pain": 0.94262,
+    "abdominal pain": 0.94262
+   },
+   "precautions": [
+    "Consult nearest hospital",
+    "wash hands through",
+    "avoid fatty spicy food",
+    "medication"
+   ]
+  },
+  "Chronic cholestasis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "nausea": 0.94262,
+    "yellowish skin": 0.94262,
+    "vomiting": 0.94262,
+    "yellowing of eyes": 0.94262,
+    "itching": 0.94262,
+    "abdominal pain": 0.94262,
+    "loss of appetite": 0.94262
+   },
+   "precautions": [
+    "cold baths",
+    "anti itch medicine",
+    "consult doctor",
+    "eat healthy"
+   ]
+  },
+  "Gastroenteritis": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "vomiting": 0.89344,
+    "diarrhoea": 0.94262,
+    "dehydration": 0.89344,
+    "sunken eyes": 0.89344
+   },
+   "precautions": [
+    "stop eating solid food for while",
+    "try taking small sips of water",
+    "rest",
+    "ease back into eating"
+   ]
+  },
+  "Common Cold": {
+   "prior": 0.02439,
+   "record_count": 120,
+   "symptom_probs": {
+    "cough": 0.94262,
+    "chest pain": 0.9918,
+    "throat irritation": 0.9918,
+    "loss of smell": 0.9918,
+    "congestion": 0.9918,
+    "redness of eyes": 0.9918,
+    "phlegm": 0.9918,
+    "muscle pain": 0.9918,
+    "high fever": 0.94262,
+    "headache": 0.94262,
+    "continuous sneezing": 0.94262,
+    "runny nose": 0.9918,
+    "chills": 0.94262,
+    "swelled lymph nodes": 0.94262,
+    "fatigue": 0.94262,
+    "sinus pressure": 0.9918,
+    "malaise": 0.94262
+   },
+   "precautions": [
+    "drink vitamin c rich drinks",
+    "take vapour",
+    "avoid cold food",
+    "keep fever in check"
+   ]
+  }
+ }
+}

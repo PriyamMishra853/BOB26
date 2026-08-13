@@ -18,6 +18,20 @@ An AI-assisted Virtual Village Clinic platform designed for trained village heal
 - **☀️🌙 Light & Dark Minimalist UI with Dynamic Cursor Shader**: Sleek glassmorphic theme with a cursor-following dynamic radial mesh gradient.
 - **📄 Printable Clinical Summary PDF Export**: 1-click formatted PDF export of complete patient case file.
 
+- **🔐 Central Role-Based Authorization Matrix**: Single-source-of-truth RBAC (`backend/src/config/rbac.js`) for `CLINIC_ASSISTANT`, `DOCTOR`, and `ADMIN` with hard denials (admins can never prescribe; assistants can never make clinical decisions), doctor case-ownership checks, and a locked-down registration flow — privileged roles can only be created by an administrator, and roles are never accepted from frontend input.
+- **🧬 Trained Disease-Symptom Model + Safety Validator**: A Bernoulli Naive Bayes model trained on the Kaggle disease-and-symptoms dataset (41 diseases, 131 symptoms, 93.7% top-1 / 100% top-3 holdout accuracy) ranks *possible conditions* with Low/Moderate/High confidence and supporting/missing evidence. Every AI response then passes a deterministic safety validator that blocks missed emergencies, prescription-only drug suggestions, and definitive-diagnosis language before anything is returned.
+- **🤖 Interactive Spline 3D Hero**: Cursor-tracking 3D robot scene on the landing page (`@splinetool/react-spline`) with automatic fallback to the lightweight Three.js canvas on small screens or offline.
+
+---
+
+## 🧬 Retraining the Disease-Symptom Model
+
+```bash
+python3 -m venv ml/.venv
+ml/.venv/bin/pip install "kagglehub[pandas-datasets]" pandas
+ml/.venv/bin/python ml/train_disease_model.py   # writes backend/src/data/disease_symptom_model.json
+```
+
 ---
 
 ## 🏗️ Architecture & Tech Stack

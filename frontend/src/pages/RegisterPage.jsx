@@ -100,6 +100,12 @@ export default function RegisterPage() {
               ))}
             </div>
             <p className="text-[11px] text-slate-500">{ROLES.find((r) => r.value === form.role)?.note}</p>
+            {form.role !== 'CLINIC_ASSISTANT' && (
+              <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1.5">
+                Security policy: Doctor and Administrator accounts must be created by an existing administrator.
+                Public self-registration is limited to Clinic Assistant.
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">

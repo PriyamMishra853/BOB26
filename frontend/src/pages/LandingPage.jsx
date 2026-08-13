@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Activity, ShieldCheck, HeartPulse, Stethoscope, ArrowRight, AlertTriangle, Users, FileText, CheckCircle2, Mic, Globe2, Sparkles, Building2 } from 'lucide-react';
-import ThreeDMedicalCanvas from '../components/ThreeDMedicalCanvas';
+import { motion } from 'framer-motion';
+import SplineHero from '../components/SplineHero';
 
 export default function LandingPage() {
   return (
@@ -12,7 +13,12 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
           
           {/* Left Hero Text */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-7 space-y-6 text-center lg:text-left"
+          >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold">
               <Sparkles className="w-4 h-4 text-blue-600" />
               AI-Powered Virtual Clinic Platform for Rural Healthcare
@@ -56,18 +62,23 @@ export default function LandingPage() {
                 <Users className="w-4 h-4" /> Admin Login
               </Link>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right 3D Interactive WebGL Canvas */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="w-full max-w-md bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm relative">
-              <div className="absolute top-3 left-4 text-xs font-bold text-slate-700 flex items-center gap-2">
+          {/* Right 3D Interactive Spline Scene */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="lg:col-span-5 flex justify-center"
+          >
+            <div className="w-full max-w-md bg-slate-50 rounded-lg border border-slate-200 shadow-sm relative overflow-hidden">
+              <div className="absolute top-3 left-4 z-10 text-xs font-bold text-slate-700 flex items-center gap-2 bg-white/70 backdrop-blur px-2 py-1 rounded">
                 <Globe2 className="w-4 h-4 text-blue-600" />
-                India Telemedicine Grid
+                Interactive 3D — drag to explore
               </div>
-              <ThreeDMedicalCanvas />
+              <SplineHero />
             </div>
-          </div>
+          </motion.div>
 
         </div>
 
@@ -84,19 +95,19 @@ export default function LandingPage() {
       {/* INDIA-LEVEL IMPACT STATS BANNER */}
       <section className="py-8 bg-slate-100 border-b border-slate-200 px-4 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm">
+          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-2xl font-bold text-blue-600">142</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Village Clinics Connected</div>
           </div>
-          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm">
+          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-2xl font-bold text-emerald-600">12</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Indian States Covered</div>
           </div>
-          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm">
+          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-2xl font-bold text-purple-600">4,820+</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Rural Patients Served</div>
           </div>
-          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm">
+          <div className="p-4 rounded-lg bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-2xl font-bold text-amber-600">4.2 Mins</div>
             <div className="text-xs text-slate-500 font-medium mt-1">Avg Doctor Response Time</div>
           </div>

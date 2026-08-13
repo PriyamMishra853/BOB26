@@ -54,6 +54,37 @@ export default function AIDoctorVisualSeparation({ aiAssessment, doctorReview, p
               </p>
             </div>
 
+            {/* Possible Conditions — trained disease-symptom model (decision support, never a diagnosis) */}
+            {aiAssessment.possible_conditions && aiAssessment.possible_conditions.length > 0 && (
+              <div className="p-4 rounded-lg bg-purple-50/50 border border-purple-200 space-y-2">
+                <div className="font-bold text-purple-800 flex items-center gap-1.5">
+                  <Bot className="w-4 h-4 text-purple-600" /> Possible Conditions — AI Decision Support (NOT a diagnosis)
+                </div>
+                <div className="space-y-1.5">
+                  {aiAssessment.possible_conditions.slice(0, 5).map((c, idx) => (
+                    <div key={idx} className="p-2.5 rounded-md bg-white border border-slate-200 text-xs space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-slate-900">{c.condition}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          c.confidence === 'High' ? 'bg-purple-100 text-purple-700' :
+                          c.confidence === 'Moderate' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'
+                        }`}>{c.confidence} confidence</span>
+                      </div>
+                      {c.supporting_evidence?.length > 0 && (
+                        <div className="text-slate-600"><span className="font-semibold text-emerald-700">Supporting:</span> {c.supporting_evidence.join(', ')}</div>
+                      )}
+                      {c.missing_or_contradicting?.length > 0 && (
+                        <div className="text-slate-500"><span className="font-semibold text-amber-700">Not reported:</span> {c.missing_or_contradicting.join(', ')}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-purple-700 font-medium">
+                  Trained on the Kaggle disease-and-symptoms dataset (Naive Bayes). Final determination is reserved for the doctor.
+                </p>
+              </div>
+            )}
+
             {/* Step-by-Step First Aid Guidance */}
             {aiAssessment.first_aid_steps && aiAssessment.first_aid_steps.length > 0 && (
               <div className="p-4 rounded-lg bg-emerald-50/50 border border-emerald-200 space-y-2">

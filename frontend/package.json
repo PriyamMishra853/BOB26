@@ -9,6 +9,8 @@
     "preview": "npx vite preview"
   },
   "dependencies": {
+    "@splinetool/react-spline": "^4.1.0",
+    "@splinetool/runtime": "^1.12.98",
     "@supabase/supabase-js": "^2.112.3",
     "@vitejs/plugin-react": "^4.3.0",
     "@zegocloud/zego-uikit-prebuilt": "^2.11.0",

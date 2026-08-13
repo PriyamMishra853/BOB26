@@ -1,6 +1,8 @@
 import { groq } from '../config/groq.js';
 import { retrieveClinicalProtocols } from './ragEngine.js';
 import { calculateRiskLevel } from './riskEngine.js';
+import { predictConditions } from './diseasePredictor.js';
+import { validateAssessment } from './safetyValidator.js';
 
 /**
  * Full AI Patient Assessment Pipeline:
@@ -58,6 +60,13 @@ export const runFullPatientAssessment = async (patientContext) => {
     }
   }
 
+  // ---- 1b. Trained disease-symptom model: rank possible conditions ----
+  // (Bernoulli NB trained on the Kaggle disease-and-symptoms dataset —
+  //  decision support only, never a diagnosis.)
+  const conditionAnalysis = predictConditions(
+    `${combinedSymptoms} ${combinedHistory} ${ocrDiagnosisNotes.join(' ')}`
+  );
+
   // ---- 2. Retrieve approved clinical protocols ----
   const retrievedProtocols = await retrieveClinicalProtocols(
     `${combinedSymptoms} ${ocrDiagnosisNotes.join(' ')} ${imageObservations.map((o) => o.cautious_summary || '').join(' ')}`,
@@ -91,6 +100,10 @@ VERIFIED OCR DOCUMENT DATA (${verifiedDocuments.length} document(s), human-verif
 WOUND / INJURY PHOTO OBSERVATIONS (${imageObservations.length} photo(s), computer vision, non-diagnostic):
 ${imageObservations.length === 0 ? '- None uploaded' : imageObservations.map((o, i) => `- Photo ${i + 1} [severity impression: ${o.severity_impression || 'N/A'}]: ${o.cautious_summary || 'No summary'} | Features: ${(o.observable_features || []).join('; ')}`).join('\n')}
 
+TRAINED DISEASE-SYMPTOM MODEL OUTPUT (Naive Bayes on Kaggle dataset — preliminary decision support, NOT a diagnosis):
+- Recognized symptoms: ${JSON.stringify(conditionAnalysis.matched_symptoms)}
+- Possible conditions (ranked): ${JSON.stringify((conditionAnalysis.possible_conditions || []).map((c) => ({ condition: c.condition, confidence: c.confidence, supporting: c.supporting_evidence, missing: c.missing_or_contradicting })))}
+
 RETRIEVED APPROVED CLINICAL PROTOCOLS (MoHFW):
 ${retrievedProtocols.map((p) => `- ${p.title} (v${p.version}, ${p.source}):\n  ${p.content}\n  Steps: ${(p.steps || []).join(' -> ')}`).join('\n') || '- None retrieved'}
 
@@ -106,6 +119,7 @@ TASK: Produce the doctor-ready clinical handoff. Return strictly a valid JSON ob
   "duration": "symptom duration",
   "important_history": ["history item incl. OCR findings"],
   "missing_information": ["information not recorded"],
+  "possible_conditions": [{ "condition": "...", "confidence": "Low|Moderate|High", "reasoning": "why this is being considered", "supporting_evidence": ["..."], "missing_or_contradicting": ["..."] }],
   "observations": ["non-diagnostic clinical observation"],
   "risk_level": "${finalRiskLevel}",
   "first_aid_steps": ["Step 1: <specific action>", "Step 2: ..."],
@@ -132,6 +146,13 @@ TASK: Produce the doctor-ready clinical handoff. Return strictly a valid JSON ob
     key_symptoms: combinedSymptoms ? combinedSymptoms.split(/[,.]/).map((s) => s.trim()).filter(Boolean).slice(0, 6) : [],
     duration: visit.symptom_duration || 'Not recorded',
     important_history: combinedHistory ? [combinedHistory] : ['No chronic conditions reported'],
+    possible_conditions: (conditionAnalysis.possible_conditions || []).map((c) => ({
+      condition: c.condition,
+      confidence: c.confidence,
+      reasoning: `Matched trained-model symptoms: ${c.supporting_evidence.join(', ') || 'weak match'}`,
+      supporting_evidence: c.supporting_evidence,
+      missing_or_contradicting: c.missing_or_contradicting
+    })),
     missing_information: [
       ...(vitals.spo2 ? [] : ['SpO2 not recorded']),
       ...(vitals.temperature ? [] : ['Temperature not recorded']),
@@ -195,6 +216,15 @@ TASK: Produce the doctor-ready clinical handoff. Return strictly a valid JSON ob
   finalAssessment.verified_document_count = verifiedDocuments.length;
   finalAssessment.legal_disclaimer =
     'AI-generated clinical assistance for a trained clinic assistant working under remote doctor supervision. This is not a diagnosis or a prescription. All medication guidance requires approval by a Registered Medical Practitioner before administration.';
+  finalAssessment.condition_model = conditionAnalysis.model_meta
+    ? {
+        matched_symptoms: conditionAnalysis.matched_symptoms,
+        source: conditionAnalysis.model_meta.source,
+        algorithm: conditionAnalysis.model_meta.algorithm,
+        holdout_top3_accuracy: conditionAnalysis.model_meta.holdout_top3_accuracy
+      }
+    : null;
 
-  return finalAssessment;
+  // ---- 7. Deterministic safety validation — raw AI output is never returned directly ----
+  return validateAssessment(finalAssessment, riskResult);
 };
