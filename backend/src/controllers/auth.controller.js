@@ -123,6 +123,35 @@ export const register = async (req, res) => {
     if (!dbRole) {
       return res.status(400).json({ error: `Invalid role '${role}'. Allowed: CLINIC_ASSISTANT, DOCTOR, ADMIN.` });
     }
+
+    // ---- SECURITY: privileged roles can never be self-assigned from the client ----
+    // DOCTOR / ADMIN accounts may only be created by an authenticated ADMIN.
+    // Single exception: first-run bootstrap when no admin exists yet.
+    if (dbRole !== 'clinic_assistant') {
+      let creatorIsAdmin = false;
+      const authHeader = req.headers.authorization;
+      if (authHeader?.startsWith('Bearer ')) {
+        try {
+          const decoded = jwt.verify(authHeader.split(' ')[1], config.jwtSecret);
+          creatorIsAdmin = decoded.role === 'ADMIN';
+        } catch { /* invalid token → not an admin */ }
+      }
+
+      if (!creatorIsAdmin) {
+        const { count: adminCount, error: countErr } = await supabaseAdmin
+          .from('staff_profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('role', 'admin');
+
+        // Fail closed: if the admin count cannot be verified, bootstrap is not allowed
+        const bootstrapAdmin = !countErr && dbRole === 'admin' && (adminCount ?? 0) === 0;
+        if (!bootstrapAdmin) {
+          return res.status(403).json({
+            error: `Creating a ${role} account requires an administrator. Public self-registration is limited to CLINIC_ASSISTANT.`
+          });
+        }
+      }
+    }
     if (dbRole === 'doctor' && !registration_number) {
       return res.status(400).json({ error: 'Doctors must provide their medical council registration_number.' });
     }

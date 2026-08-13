@@ -10,22 +10,24 @@ import {
   pushToDoctor,
   ringCall
 } from '../controllers/consultation.controller.js';
-import { authenticateUser } from '../middleware/auth.middleware.js';
+import { authenticateUser, authorizeRoles } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
 router.use(authenticateUser);
 
-router.post('/push-case', pushToDoctor);
-router.post('/push-to-doctor', pushToDoctor);
-router.post('/ring-call', ringCall);
-router.post('/schedule', scheduleConsultation);
-router.get('/', getConsultations);
-router.post('/:id/join', joinConsultation);
-router.post('/:id/decline', declineConsultation);
+// Assistants (and admins on their behalf) request/schedule consultations
+router.post('/push-case', authorizeRoles('CLINIC_ASSISTANT', 'ADMIN'), pushToDoctor);
+router.post('/push-to-doctor', authorizeRoles('CLINIC_ASSISTANT', 'ADMIN'), pushToDoctor);
+router.post('/ring-call', authorizeRoles('CLINIC_ASSISTANT', 'ADMIN'), ringCall);
+router.post('/schedule', authorizeRoles('CLINIC_ASSISTANT', 'ADMIN'), scheduleConsultation);
+router.get('/', authorizeRoles('CLINIC_ASSISTANT', 'DOCTOR', 'ADMIN'), getConsultations);
+// Both sides of the call may join; only doctors accept/decline
+router.post('/:id/join', authorizeRoles('CLINIC_ASSISTANT', 'DOCTOR'), joinConsultation);
+router.post('/:id/decline', authorizeRoles('DOCTOR'), declineConsultation);
 
-router.post('/', createConsultation);
-router.post('/:id/start', startConsultation);
-router.post('/:id/end', endConsultation);
+router.post('/', authorizeRoles('CLINIC_ASSISTANT', 'ADMIN'), createConsultation);
+router.post('/:id/start', authorizeRoles('CLINIC_ASSISTANT', 'DOCTOR'), startConsultation);
+router.post('/:id/end', authorizeRoles('CLINIC_ASSISTANT', 'DOCTOR'), endConsultation);
 
 export default router;

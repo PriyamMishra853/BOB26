@@ -77,6 +77,19 @@ export const getDoctorCaseDetails = async (req, res) => {
       return res.status(404).json({ error: 'Case file not found in the database.' });
     }
 
+    // ---- RBAC: a doctor may only open unassigned queue cases or their own ----
+    if (req.user?.role === 'DOCTOR' && Array.isArray(visitData.consultations)) {
+      const assignedDoctorIds = visitData.consultations
+        .map((c) => c.doctor_id)
+        .filter(Boolean);
+      const myId = asUuid(req.user.id);
+      if (assignedDoctorIds.length > 0 && !assignedDoctorIds.includes(myId)) {
+        return res.status(403).json({
+          error: 'Access Denied. This case is assigned to another doctor.'
+        });
+      }
+    }
+
     if (visitData.patients) {
       visitData.patients.name = visitData.patients.full_name || visitData.patients.name;
       visitData.patients.age = visitData.patients.age_years || visitData.patients.age;
@@ -136,11 +149,16 @@ export const recordDoctorReview = async (req, res) => {
     // 1. Find or create the consultation this decision belongs to
     let { data: consultation } = await supabaseAdmin
       .from('consultations')
-      .select('id, status')
+      .select('id, status, doctor_id')
       .eq('visit_id', visitId)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle();
+
+    // RBAC: a doctor cannot record a decision on a case assigned to another doctor
+    if (consultation?.doctor_id && doctorStaffId && consultation.doctor_id !== doctorStaffId) {
+      return res.status(403).json({ error: 'Access Denied. This case is assigned to another doctor.' });
+    }
 
     if (!consultation) {
       const { data: created, error: conErr } = await supabaseAdmin
