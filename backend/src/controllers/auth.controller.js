@@ -14,6 +14,28 @@ const ROLE_API_TO_DB = {
   ADMIN: 'admin'
 };
 
+/**
+ * Built-in demo accounts (match the "Demo accounts" buttons on the login page).
+ * Active only when Supabase is not configured or DEMO_MODE=true — lets the
+ * platform be demonstrated without a live database.
+ */
+const DEMO_USERS = {
+  'assistant@clinic.org': {
+    password: 'Assist@123',
+    profile: { id: '11111111-1111-4111-8111-111111111111', email: 'assistant@clinic.org', full_name: 'Demo Clinic Assistant', role: 'clinic_assistant', phone: null, status: 'active' }
+  },
+  'doctor@clinic.org': {
+    password: 'Doctor@123',
+    profile: { id: '22222222-2222-4222-8222-222222222222', email: 'doctor@clinic.org', full_name: 'Dr. Demo Physician', role: 'doctor', phone: null, status: 'active' }
+  },
+  'admin@clinic.org': {
+    password: 'Admin@123',
+    profile: { id: '33333333-3333-4333-8333-333333333333', email: 'admin@clinic.org', full_name: 'Demo Administrator', role: 'admin', phone: null, status: 'active' }
+  }
+};
+
+const demoModeEnabled = () => !config.supabase.url || process.env.DEMO_MODE === 'true';
+
 const issueToken = (profile) =>
   jwt.sign(
     {
@@ -47,6 +69,24 @@ export const login = async (req, res) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
+
+    // 0. Demo-mode accounts (no database required)
+    const demoUser = DEMO_USERS[cleanEmail];
+    if (demoUser && demoModeEnabled()) {
+      if (password !== demoUser.password) {
+        return res.status(401).json({ error: 'Invalid email or password.' });
+      }
+      const token = issueToken(demoUser.profile);
+      await logAuditEvent({
+        actorId: demoUser.profile.id,
+        actorRole: ROLE_DB_TO_API[demoUser.profile.role],
+        action: 'USER_LOGIN_DEMO',
+        entityType: 'STAFF_PROFILES',
+        entityId: demoUser.profile.id,
+        metadata: { email: cleanEmail, demo: true }
+      });
+      return res.json({ token, user: publicUser(demoUser.profile), demo: true });
+    }
 
     // 1. Verify the password with Supabase Auth
     const { data: authData, error: authErr } = await supabase.auth.signInWithPassword({
@@ -223,6 +263,74 @@ export const register = async (req, res) => {
   } catch (error) {
     console.error('Registration error:', error.message);
     return res.status(500).json({ error: 'Server error during registration', details: error.message });
+  }
+};
+
+/**
+ * POST /api/auth/oauth-exchange  { access_token }
+ * Completes Google (or any Supabase OAuth provider) sign-in: verifies the
+ * Supabase session token, then maps it to a staff profile. The role ALWAYS
+ * comes from staff_profiles — first-time Google users are provisioned as
+ * CLINIC_ASSISTANT (the only publicly self-registrable role).
+ */
+export const oauthExchange = async (req, res) => {
+  try {
+    const { access_token } = req.body;
+    if (!access_token) {
+      return res.status(400).json({ error: 'access_token is required.' });
+    }
+
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(access_token);
+    if (error || !user?.email) {
+      return res.status(401).json({ error: 'Google sign-in could not be verified. Please try again.' });
+    }
+
+    const cleanEmail = user.email.toLowerCase().trim();
+
+    let { data: profile } = await supabaseAdmin
+      .from('staff_profiles')
+      .select('*')
+      .eq('email', cleanEmail)
+      .maybeSingle();
+
+    if (!profile) {
+      // First Google sign-in: provision the lowest-privilege role only
+      const { data: created, error: createErr } = await supabaseAdmin
+        .from('staff_profiles')
+        .insert([{
+          full_name: user.user_metadata?.full_name || user.user_metadata?.name || cleanEmail.split('@')[0],
+          role: 'clinic_assistant',
+          email: cleanEmail,
+          phone: null,
+          status: 'active'
+        }])
+        .select()
+        .single();
+      if (createErr) {
+        return res.status(500).json({ error: `Could not provision a staff profile: ${createErr.message}` });
+      }
+      profile = created;
+    }
+
+    if (profile.status !== 'active') {
+      return res.status(403).json({ error: `This account is ${profile.status}. Contact an administrator.` });
+    }
+
+    const token = issueToken(profile);
+
+    await logAuditEvent({
+      actorId: profile.id,
+      actorRole: ROLE_DB_TO_API[profile.role],
+      action: 'USER_LOGIN_GOOGLE',
+      entityType: 'STAFF_PROFILES',
+      entityId: profile.id,
+      metadata: { email: profile.email, provider: 'google' }
+    });
+
+    return res.json({ token, user: publicUser(profile) });
+  } catch (error) {
+    console.error('OAuth exchange error:', error.message);
+    return res.status(500).json({ error: 'Server error during Google sign-in', details: error.message });
   }
 };
 

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import api from '../services/api';
+import { supabase, isSupabaseConfigured } from '../config/supabase';
 
 const AuthContext = createContext();
 
@@ -42,6 +43,34 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Starts the Google OAuth redirect flow (Supabase Auth provider must be enabled)
+  const loginWithGoogle = async () => {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase anon key is not configured (VITE_SUPABASE_ANON_KEY).');
+    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/login` }
+    });
+    if (error) throw error;
+  };
+
+  // Called after the OAuth redirect returns: exchanges the Supabase session
+  // for the platform JWT (role always comes from the staff_profiles table)
+  const completeGoogleSignIn = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return null;
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/oauth-exchange', { access_token: session.access_token });
+      persistSession(res.data.token, res.data.user);
+      await supabase.auth.signOut().catch(() => {}); // platform JWT takes over from here
+      return res.data.user;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logoutUser = async () => {
     try {
       await api.post('/auth/logout');
@@ -55,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, loginUser, registerUser, logoutUser }}>
+    <AuthContext.Provider value={{ user, token, loading, loginUser, registerUser, logoutUser, loginWithGoogle, completeGoogleSignIn }}>
       {children}
     </AuthContext.Provider>
   );
